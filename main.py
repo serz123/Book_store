@@ -18,9 +18,7 @@ DB_DATABASE = os.getenv("DB_DATABASE")
 # Connect to Database
 try:
     db = Database(host=DB_HOST, username=DB_USERNAME, password=DB_PASSWORD, database=DB_DATABASE)
-    print(db) #TODO: delete
-    print("Connection to SQL server is successful")
-except Exception as e:    
+except Exception as e:
     print(e) #TODO: CHANGE TO USER FRENDLY MESSAGE
 
 main_menu(db)

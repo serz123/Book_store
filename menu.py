@@ -1,18 +1,19 @@
-def print_header(title):
+def print_header(title, subtitle):
     print("***********************************************************")
     print("***                                                     ***")
     print("***          " + title + "           ***")
-    print("***                                                     ***")
+    print("***              " + subtitle + "                            ***")
     print("***********************************************************") 
 
 def print_option(options):
     for i in range(len(options)):
         print(f"{i+1}. {options[i]}") 
+    print("q. Quit")
 
 def  check_choice(maxOptions):
     selectedOption = None
     while (selectedOption is None):
-        choice = input("Enter choice:")
+        choice = input("Type in your option: ")
         try:
             if choice == 'q':
                 quit()
