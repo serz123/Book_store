@@ -18,3 +18,9 @@ def search_by_author_sub(db:Database, author):
     books = db.execute_with_fetchall(query)
 
     return books
+
+def search_by_title_sub(db:Database, title):
+    query = f""" SELECT * FROM books WHERE title LIKE '%{title}%'; """
+    books = db.execute_with_fetchall(query)
+
+    return books

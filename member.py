@@ -28,13 +28,14 @@ def member_login(db: Database):
     while(not valid_cridentials):
         email = input("Enter email: ")
         password = getpass("Enter password: ")
-        if (check_cridentilas(db=db,email=email,password=password)):
+        user = check_cridentilas(db=db,email=email,password=password)
+        if (user):
             valid_cridentials = True
-            return valid_cridentials
+            return user
         else:
             print("Cridentials not true...................")  
 
 def check_cridentilas(db:Database, email, password):
     query = f""" SELECT * FROM members WHERE email="{email}" AND password="{password}" ; """
     user = db.execute_with_fetchone(query)
-    return user is not None
+    return user

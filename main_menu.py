@@ -1,13 +1,16 @@
 from menu import print_header, print_option, check_choice, print_book
 from getpass import getpass
 from member import member_login, add_member
-from books import list_all_subjects, search_by_subjects, search_by_author_sub
-
+from books import list_all_subjects, search_by_subjects, search_by_author_sub, search_by_title_sub
+from cart import add_to_cart
+#TODO: kad je enter onda se enterom vraca nazad a ne s 2
+user_data = {}
 options_main = ["Member Login", "New Member Registration"]
 options_member = ["Browse by Subject", "Search by Author/Title", "Check Out", "Logout"]
 options_author_or_title = ['Author Search', 'Title Search', 'Go Back To Main Menu']
 
 def main_menu(db):
+    global user_data
     #print header
     print_header("Welcome to the Online Book Store", "           ")
     
@@ -19,8 +22,9 @@ def main_menu(db):
         choice_main = check_choice(len(options_main))
 
         if choice_main == 1:
-            valid = member_login(db)
-            if(valid):
+            user = member_login(db)
+            if(user):
+                user_data = user
                 member_menu(db)
         elif choice_main == 2: 
             add_member(db)
@@ -28,10 +32,12 @@ def main_menu(db):
             quit()   
 
 def member_menu(db):
+    global user_data
        #print header
     print_header("Welcome to the Online Book Store", "Member Menu                            ***\n***                         ")
     
     while (True):
+        print(user_data)
         # print options
         print_option(options_member)
 
@@ -42,6 +48,11 @@ def member_menu(db):
             browse_by_subject_menu(db)
         elif choice_member == 2: 
             search_by_author_or_title_menu(db)
+        elif choice_member == 3: 
+            print()
+        elif choice_member == 4: 
+            user_data = {}
+            main_menu(db)
         else: 
             quit()   
 
@@ -91,8 +102,9 @@ def books_displayed_menu(db, ofst, subject):
             elif choice == '':
                 member_menu(db)
 
-            elif books_isbn:
+            elif choice in books_isbn:
                 selectedOption = choice
+                add_to_cart(db, user_data[7], choice)
     
             else:
                 print("Invalid input: please select the available options.")
@@ -109,7 +121,7 @@ def search_by_author_or_title_menu(db):
     if choice_author_or_title == 1:
         search_by_author_menu(db)
     elif choice_author_or_title == 2: 
-        print()
+        search_by_title_menu(db)
     elif choice_author_or_title == 3: 
         member_menu(db)
     else: 
@@ -119,6 +131,13 @@ def search_by_author_menu(db):
     options_back_and_next = ['Enter ISBN to put in the cart', 'Press ENTER to return to the main menu', 'Press n ENTER to continue browsing']
     author = input("Enter author name or part of the name: ")
     books = search_by_author_sub(db, author)
+    print(f"{len(books)} books found")
+    print_books_and_choos_next_action(db, books, options_back_and_next)
+
+def search_by_title_menu(db):
+    options_back_and_next = ['Enter ISBN to put in the cart', 'Press ENTER to return to the main menu', 'Press n ENTER to continue browsing']
+    title = input("Enter title name or part of the name: ")
+    books = search_by_title_sub(db, title)
     print(f"{len(books)} books found")
     print_books_and_choos_next_action(db, books, options_back_and_next)
     
@@ -140,7 +159,8 @@ def print_books_and_choos_next_action(db, books, options_back_and_next):
 
     #check the user choice
     selectedOption = None
-    books_isbn = [book[0] for book in books]
+    books_isbn = [book[0] for book in books_to_print]
+    print(books_isbn)
 
     while (selectedOption is None):
         choice = input("Type in your option: ")
@@ -154,9 +174,10 @@ def print_books_and_choos_next_action(db, books, options_back_and_next):
             elif choice == '':
                 member_menu(db)
 
-            elif books_isbn:
+            elif choice in books_isbn:
                 selectedOption = choice
-    
+                add_to_cart(db, user_data[7], choice)
+
             else:
                 print("Invalid input: please select the available options.")
         except Exception:
