@@ -1,10 +1,12 @@
-from menu import print_header,print_option,check_choice
+from menu import print_header, print_option, check_choice, print_book
 from getpass import getpass
-from mysql.connector import connect
-from member import check_cridentilas, add_member
+from member import member_login, add_member
+from books import list_all_subjects, search_by_subjects, search_by_author_sub
 
 options_main = ["Member Login", "New Member Registration"]
 options_member = ["Browse by Subject", "Search by Author/Title", "Check Out", "Logout"]
+options_author_or_title = ['Author Search', 'Title Search', 'Go Back To Main Menu']
+
 def main_menu(db):
     #print header
     print_header("Welcome to the Online Book Store", "           ")
@@ -25,18 +27,6 @@ def main_menu(db):
         else: 
             quit()   
 
-def member_login(db):
-    valid_cridentials = False
-    email,password= (None,None)
-    while(not valid_cridentials):
-        email = input("Enter email:")
-        password = getpass("Enter password:")
-        if (check_cridentilas(db=db,email=email,password=password)):
-            valid_cridentials = True
-            return valid_cridentials
-        else:
-            print("Cridentials not true...................")  
-
 def member_menu(db):
        #print header
     print_header("Welcome to the Online Book Store", "Member Menu                            ***\n***                         ")
@@ -46,13 +36,129 @@ def member_menu(db):
         print_option(options_member)
 
         #check the user choice
-        choice_main = check_choice(len(options_member))
+        choice_member = check_choice(len(options_member))
 
-        if choice_main == 1:
-            valid = member_login(db)
-            if(valid):
-                member_menu()
-        elif choice_main == 2: 
-            add_member(db)
+        if choice_member == 1:
+            browse_by_subject_menu(db)
+        elif choice_member == 2: 
+            search_by_author_or_title_menu(db)
         else: 
             quit()   
+
+def browse_by_subject_menu(db):
+    options_subjects = list_all_subjects(db)
+    # print options
+    print_option(options_subjects)
+    #check the user choice
+    choice_subject = check_choice(len(options_subjects))
+    if choice_subject is not None:
+        books_displayed_menu(db, 0, options_subjects[choice_subject - 1])
+    else: 
+        browse_by_subject_menu(db)
+
+def books_displayed_menu(db, ofst, subject):
+    options_back_and_next = ['Enter ISBN to put in the cart', 'Press ENTER to return to the main menu', 'Press n ENTER to continue browsing']
+
+    # get 2 books
+    books = search_by_subjects(db, subject, 2, ofst)
+
+    # Check if there is more books
+    ofst = ofst + 2
+    next_page_exsist = search_by_subjects(db, subject, 2, ofst)
+    if next_page_exsist == []:
+        options_back_and_next.pop()
+
+    # print books
+    for book in books:
+        print_book(book)
+ 
+    #print options
+    print_option(options_back_and_next)
+
+    #check the user choice
+    selectedOption = None
+    books_isbn = [book[0] for book in books]
+
+    while (selectedOption is None):
+        choice = input("Type in your option: ")
+        try:
+            if choice == 'q':
+                quit()
+
+            elif choice == 'n' and next_page_exsist != []:
+                books_displayed_menu(db, ofst, subject)
+            
+            elif choice == '':
+                member_menu(db)
+
+            elif books_isbn:
+                selectedOption = choice
+    
+            else:
+                print("Invalid input: please select the available options.")
+        except Exception:
+            selectedOption = None
+            print("Invalid input. Try again!")    
+
+def search_by_author_or_title_menu(db):
+    # print options
+    print_option(options_author_or_title)
+    #check the user choice
+    choice_author_or_title = check_choice(len(options_author_or_title))
+
+    if choice_author_or_title == 1:
+        search_by_author_menu(db)
+    elif choice_author_or_title == 2: 
+        print()
+    elif choice_author_or_title == 3: 
+        member_menu(db)
+    else: 
+        quit()  
+
+def search_by_author_menu(db):
+    options_back_and_next = ['Enter ISBN to put in the cart', 'Press ENTER to return to the main menu', 'Press n ENTER to continue browsing']
+    author = input("Enter author name or part of the name: ")
+    books = search_by_author_sub(db, author)
+    print(f"{len(books)} books found")
+    print_books_and_choos_next_action(db, books, options_back_and_next)
+    
+
+def print_books_and_choos_next_action(db, books, options_back_and_next):
+    books_to_print = books[:3]
+    del books[:3]
+    
+    next_page_exsist = True
+    #Check if there is more books
+    if len(books) <= 0: 
+        options_back_and_next.pop()
+        next_page_exsist = False
+    
+    for book in books_to_print:
+        print_book(book)
+  
+    print_option(options_back_and_next)
+
+    #check the user choice
+    selectedOption = None
+    books_isbn = [book[0] for book in books]
+
+    while (selectedOption is None):
+        choice = input("Type in your option: ")
+        try:
+            if choice == 'q':
+                quit()
+
+            elif choice == 'n' and next_page_exsist == True:
+                print_books_and_choos_next_action(db, books, options_back_and_next)
+            
+            elif choice == '':
+                member_menu(db)
+
+            elif books_isbn:
+                selectedOption = choice
+    
+            else:
+                print("Invalid input: please select the available options.")
+        except Exception:
+            selectedOption = None
+            print("Invalid input. Try again!")  
