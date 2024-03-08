@@ -19,6 +19,6 @@ DB_DATABASE = os.getenv("DB_DATABASE")
 try:
     db = Database(host=DB_HOST, username=DB_USERNAME, password=DB_PASSWORD, database=DB_DATABASE)
 except Exception as e:
-    print(e) #TODO: CHANGE TO USER FRENDLY MESSAGE
+    print("Something went wrong. Please try again later!") #:
 
 main_menu(db)

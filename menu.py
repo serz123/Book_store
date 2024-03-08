@@ -21,6 +21,7 @@ def  check_choice(maxOptions):
     selectedOption = None
     while (selectedOption is None):
         choice = input("Type in your option: ")
+        print()
         try:
             if choice == 'q':
                 quit()

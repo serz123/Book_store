@@ -1,6 +1,7 @@
 from database import Database
 
-def add_to_cart(db: Database, userid, isbn):  
+def add_to_cart(db: Database, user, isbn):  
+    userid = user[7]
     try:
         # Check if there is exsisting book in the cart
         check_query = f"""SELECT qty FROM cart WHERE userid='{userid}' AND isbn='{isbn}';"""
@@ -10,14 +11,14 @@ def add_to_cart(db: Database, userid, isbn):
             new_quantity = existing_quantity[0] + get_quantity()
             update_query = f"""UPDATE cart SET qty={new_quantity} WHERE userid='{userid}' AND isbn='{isbn}';"""
             db.execute_with_commit(update_query)
-            print("Updating cart was successful!")
+            print("Updating cart was successful!\n")
         else:
             insert_query = f"""INSERT INTO cart VALUES ('{userid}', '{isbn}', '{get_quantity()}');"""
             db.execute_with_commit(insert_query)
-            print("Adding book/s to cart was successful!")
+            print("Adding book/s to cart was successful!\n")
             
     except Exception as e:
-        print("ADDING book/s to cart has FAILED!")
+        print("ADDING book/s to cart has FAILED!\n")
         print(e)
 
 def get_quantity():
@@ -35,5 +36,9 @@ def get_quantity():
 
     return desired_quantity
 
-
-   
+def get_invoice_info_from_cart(db, user):
+    user_id = user[7]
+    query = f""" SELECT c.isbn, b.title, b.price, c.qty FROM cart c INNER JOIN books b ON c.isbn = b.isbn WHERE c.userid = {user_id}; """
+    invoice_info = db.execute_with_fetchall(query)
+    
+    return invoice_info

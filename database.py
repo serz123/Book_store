@@ -28,3 +28,14 @@ class Database:
         with self.__get_cursor__() as cursor:
             cursor.execute(query)
             self.connection.commit()
+
+    #execute without commit
+    def execute_without_commit(self,query):
+        with self.__get_cursor__() as cursor:
+            cursor.execute(query)
+
+    def get_last_autoincremented_vallue(self):
+           with self.__get_cursor__() as cursor:
+                cursor.execute("SELECT LAST_INSERT_ID();")
+                last_insert_id = cursor.fetchone()[0]
+                return last_insert_id

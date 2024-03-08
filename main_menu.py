@@ -3,6 +3,8 @@ from getpass import getpass
 from member import member_login, add_member
 from books import list_all_subjects, search_by_subjects, search_by_author_sub, search_by_title_sub
 from cart import add_to_cart
+from check_out import get_invoice
+
 #TODO: kad je enter onda se enterom vraca nazad a ne s 2
 user_data = {}
 options_main = ["Member Login", "New Member Registration"]
@@ -37,7 +39,6 @@ def member_menu(db):
     print_header("Welcome to the Online Book Store", "Member Menu                            ***\n***                         ")
     
     while (True):
-        print(user_data)
         # print options
         print_option(options_member)
 
@@ -49,7 +50,7 @@ def member_menu(db):
         elif choice_member == 2: 
             search_by_author_or_title_menu(db)
         elif choice_member == 3: 
-            print()
+            get_invoice(db, user_data)
         elif choice_member == 4: 
             user_data = {}
             main_menu(db)
@@ -92,6 +93,7 @@ def books_displayed_menu(db, ofst, subject):
 
     while (selectedOption is None):
         choice = input("Type in your option: ")
+        print()
         try:
             if choice == 'q':
                 quit()
@@ -100,11 +102,11 @@ def books_displayed_menu(db, ofst, subject):
                 books_displayed_menu(db, ofst, subject)
             
             elif choice == '':
-                member_menu(db)
+                member_menu(db) #TODO: JUST RETURN AND IT  WILL GO BACK TO MEMBER M?
 
             elif choice in books_isbn:
                 selectedOption = choice
-                add_to_cart(db, user_data[7], choice)
+                add_to_cart(db, user_data, choice)
     
             else:
                 print("Invalid input: please select the available options.")
@@ -131,14 +133,22 @@ def search_by_author_menu(db):
     options_back_and_next = ['Enter ISBN to put in the cart', 'Press ENTER to return to the main menu', 'Press n ENTER to continue browsing']
     author = input("Enter author name or part of the name: ")
     books = search_by_author_sub(db, author)
-    print(f"{len(books)} books found")
+    print(f"{len(books)} books found \n")
+    #Check if there are books
+    if len(books)==0: 
+        #Remove enter adding to cart option if there are no book found
+        options_back_and_next.pop(0)
     print_books_and_choos_next_action(db, books, options_back_and_next)
 
 def search_by_title_menu(db):
     options_back_and_next = ['Enter ISBN to put in the cart', 'Press ENTER to return to the main menu', 'Press n ENTER to continue browsing']
     title = input("Enter title name or part of the name: ")
     books = search_by_title_sub(db, title)
-    print(f"{len(books)} books found")
+    print(f"{len(books)} books found\n")
+     #Check if there are books
+    if len(books)==0: 
+        #Remove enter adding to cart option if there are no book found
+        options_back_and_next.pop(0)
     print_books_and_choos_next_action(db, books, options_back_and_next)
     
 
@@ -160,10 +170,10 @@ def print_books_and_choos_next_action(db, books, options_back_and_next):
     #check the user choice
     selectedOption = None
     books_isbn = [book[0] for book in books_to_print]
-    print(books_isbn)
 
     while (selectedOption is None):
         choice = input("Type in your option: ")
+        print()
         try:
             if choice == 'q':
                 quit()
@@ -173,10 +183,10 @@ def print_books_and_choos_next_action(db, books, options_back_and_next):
             
             elif choice == '':
                 member_menu(db)
-
+                
             elif choice in books_isbn:
                 selectedOption = choice
-                add_to_cart(db, user_data[7], choice)
+                add_to_cart(db, user_data, choice)
 
             else:
                 print("Invalid input: please select the available options.")
