@@ -1,8 +1,8 @@
 from cart import get_invoice_info_from_cart
 from order import save_new_order
 
+#Gets invoice
 def get_invoice(db, user):
-
     info = get_invoice_info_from_cart(db, user)
     if len(info) == 0:
         print("The cart is empty!")
@@ -14,6 +14,7 @@ def get_invoice(db, user):
     print_cart_details(info)
     proceed_to_check_out(db, user, info)
 
+#Prints cart details
 def print_cart_details(info):
     total_price = 0
     print("ISBN         Title                             $   Qty  Total")
@@ -25,6 +26,7 @@ def print_cart_details(info):
     print(f"Total                                                  ${str(total_price).ljust(6)}")
     print("-" * 61)
 
+#Proceed to checkout options and actions
 def proceed_to_check_out(db, user, info):
     selectedOption = None
     while (selectedOption is None):

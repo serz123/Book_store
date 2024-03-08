@@ -2,6 +2,7 @@ from database import Database
 from getpass import getpass
 from validate_email import validate_email
 
+#Inserts new member to database
 def add_member(db:Database):
     print("Welcome to the Online Book Store")
     print("New Member registration")
@@ -46,11 +47,13 @@ def add_member(db:Database):
         print("Registration FAILD!")
         print(e) 
 
+#Checks if email is already used for other member
 def email_used(db:Database, email):
     query = f""" SELECT * FROM members WHERE email="{email}"; """
     user = db.execute_with_fetchone(query)
     return user is not None
 
+#Member loggs in
 def member_login(db: Database):
     valid_cridentials = False
     email,password= (None,None)
@@ -64,6 +67,7 @@ def member_login(db: Database):
         else:
             print("Cridentials not true...................")  
 
+#Checks if inputed cridentials are valid
 def check_cridentilas(db:Database, email, password):
     query = f""" SELECT * FROM members WHERE email="{email}" AND password="{password}" ; """
     user = db.execute_with_fetchone(query)

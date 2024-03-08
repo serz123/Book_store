@@ -5,12 +5,12 @@ from books import list_all_subjects, search_by_subjects, search_by_author_sub, s
 from cart import add_to_cart
 from check_out import get_invoice
 
-#TODO: kad je enter onda se enterom vraca nazad a ne s 2
 user_data = {}
 options_main = ["Member Login", "New Member Registration"]
 options_member = ["Browse by Subject", "Search by Author/Title", "Check Out", "Logout"]
 options_author_or_title = ['Author Search', 'Title Search', 'Go Back To Main Menu']
 
+#Main menu of the application
 def main_menu(db):
     global user_data
     #print header
@@ -33,6 +33,7 @@ def main_menu(db):
         else: 
             quit()   
 
+#Menu for memeber that is logged in
 def member_menu(db):
     global user_data
        #print header
@@ -57,6 +58,7 @@ def member_menu(db):
         else: 
             quit()   
 
+#Menu for browsing books by subject
 def browse_by_subject_menu(db):
     options_subjects = list_all_subjects(db)
     # print options
@@ -68,6 +70,7 @@ def browse_by_subject_menu(db):
     else: 
         browse_by_subject_menu(db)
 
+#Displaying books and presents options for next step
 def books_displayed_menu(db, ofst, subject):
     options_back_and_next = ['Enter ISBN to put in the cart', 'Press ENTER to return to the main menu', 'Press n ENTER to continue browsing']
 
@@ -102,7 +105,7 @@ def books_displayed_menu(db, ofst, subject):
                 books_displayed_menu(db, ofst, subject)
             
             elif choice == '':
-                member_menu(db) #TODO: JUST RETURN AND IT  WILL GO BACK TO MEMBER M?
+                member_menu(db) 
 
             elif choice in books_isbn:
                 selectedOption = choice
@@ -114,6 +117,7 @@ def books_displayed_menu(db, ofst, subject):
             selectedOption = None
             print("Invalid input. Try again!")    
 
+#Menu for searching books by title or author
 def search_by_author_or_title_menu(db):
     # print options
     print_option(options_author_or_title)
@@ -129,6 +133,7 @@ def search_by_author_or_title_menu(db):
     else: 
         quit()  
 
+#Searching books by author
 def search_by_author_menu(db):
     options_back_and_next = ['Enter ISBN to put in the cart', 'Press ENTER to return to the main menu', 'Press n ENTER to continue browsing']
     author = input("Enter author name or part of the name: ")
@@ -140,6 +145,7 @@ def search_by_author_menu(db):
         options_back_and_next.pop(0)
     print_books_and_choos_next_action(db, books, options_back_and_next)
 
+#Searching books by title
 def search_by_title_menu(db):
     options_back_and_next = ['Enter ISBN to put in the cart', 'Press ENTER to return to the main menu', 'Press n ENTER to continue browsing']
     title = input("Enter title name or part of the name: ")
@@ -151,7 +157,7 @@ def search_by_title_menu(db):
         options_back_and_next.pop(0)
     print_books_and_choos_next_action(db, books, options_back_and_next)
     
-
+#Prit all books and shows nex actions for search menues
 def print_books_and_choos_next_action(db, books, options_back_and_next):
     books_to_print = books[:3]
     del books[:3]

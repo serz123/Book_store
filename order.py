@@ -1,6 +1,7 @@
 from database import Database
 from datetime import date as today_date
 
+#Saves new order
 def save_new_order(db: Database, user, cart_info):
     try: 
         date = today_date.today().strftime('%Y-%m-%d')

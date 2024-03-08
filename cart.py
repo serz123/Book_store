@@ -1,5 +1,6 @@
 from database import Database
 
+#Insert to Cart in Database
 def add_to_cart(db: Database, user, isbn):  
     userid = user[7]
     try:
@@ -21,6 +22,7 @@ def add_to_cart(db: Database, user, isbn):
         print("ADDING book/s to cart has FAILED!\n")
         print(e)
 
+#Checks if there is already that book in cart and amount of them
 def get_quantity():
     desired_quantity = None
     while desired_quantity is None:
@@ -36,6 +38,7 @@ def get_quantity():
 
     return desired_quantity
 
+#Returns data from cart
 def get_invoice_info_from_cart(db, user):
     user_id = user[7]
     query = f""" SELECT c.isbn, b.title, b.price, c.qty FROM cart c INNER JOIN books b ON c.isbn = b.isbn WHERE c.userid = {user_id}; """

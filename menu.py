@@ -1,3 +1,4 @@
+#Prints header
 def print_header(title, subtitle):
     print("***********************************************************")
     print("***                                                     ***")
@@ -5,6 +6,7 @@ def print_header(title, subtitle):
     print("***              " + subtitle + "                            ***")
     print("***********************************************************") 
 
+#Prints options
 def print_option(options):
     for i in range(len(options)):
         print(f"{i+1}. {options[i]}") 
@@ -12,11 +14,13 @@ def print_option(options):
     # Print empty row at the end
     print()
 
+#Prints books
 def print_book(book):
     print(f"Author: {book[1]} \nTitle: {book[2]} \nISBN: {book[0]} \nPrice: {book[3]} \nSubject: {book[4]}")
     # Print empty row at the end
     print()
 
+#Checks users choice
 def  check_choice(maxOptions):
     selectedOption = None
     while (selectedOption is None):

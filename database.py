@@ -34,6 +34,7 @@ class Database:
         with self.__get_cursor__() as cursor:
             cursor.execute(query)
 
+    #Gets last autoincremented value
     def get_last_autoincremented_vallue(self):
            with self.__get_cursor__() as cursor:
                 cursor.execute("SELECT LAST_INSERT_ID();")
